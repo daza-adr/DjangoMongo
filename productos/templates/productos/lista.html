@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Inventario de productos</title>
+    <link rel="stylesheet" href="{% static 'productos/estilos.css' %}">
+</head>
+<body>
+    <nav class="barra-navegacion">
+        <div class="contenedor">
+            <a class="marca" href="{% url 'productos:listar' %}">Inventario</a>
+        </div>
+    </nav>
+
+    <main class="contenedor contenido-principal">
+        {% if messages %}
+            <div class="mensajes">
+                {% for message in messages %}
+                    <p class="mensaje {% if message.tags == 'error' %}mensaje-error{% else %}mensaje-exito{% endif %}">
+                        {{ message }}
+                    </p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <header class="encabezado-pagina encabezado-lista">
+            <div>
+                <h1>Inventario de productos</h1>
+                <p>Consulta y administra tus productos.</p>
+            </div>
+            <a class="boton boton-principal" href="{% url 'productos:crear' %}">
+                Registrar producto
+            </a>
+        </header>
+
+        <div class="tarjeta tabla-contenedor">
+            <table class="tabla-productos">
+                <thead>
+                    <tr>
+                        <th scope="col">Producto</th>
+                        <th scope="col">Precio</th>
+                        <th scope="col">Cantidad disponible</th>
+                        <th scope="col">Categoria</th>
+                        <th scope="col" class="columna-acciones">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for producto in productos %}
+                        <tr>
+                            <td>{{ producto.nombre }}</td>
+                            <td>${{ producto.precio }}</td>
+                            <td>{{ producto.cantidad }}</td>
+                            <td>{{ producto.categoria }}</td>
+                            <td class="columna-acciones">
+                                <div class="acciones-tabla">
+                                    <a
+                                        class="boton boton-pequeno boton-secundario"
+                                        href="{% url 'productos:editar' producto.id %}"
+                                    >
+                                        Editar
+                                    </a>
+                                    <form
+                                        method="POST"
+                                        action="{% url 'productos:eliminar' producto.id %}"
+                                    >
+                                        {% csrf_token %}
+                                        <button
+                                            class="boton boton-pequeno boton-peligro"
+                                            type="submit"
+                                            onclick="return confirm('¿Deseas eliminar este producto?')"
+                                        >
+                                            Eliminar
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5" class="tabla-vacia">
+                                No hay productos registrados.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+</body>
+</html>

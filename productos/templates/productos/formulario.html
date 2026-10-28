@@ -1,0 +1,105 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% if producto %}Editar producto{% else %}Registrar producto{% endif %}</title>
+    <link rel="stylesheet" href="{% static 'productos/estilos.css' %}">
+</head>
+<body>
+    <nav class="barra-navegacion">
+        <div class="contenedor">
+            <a class="marca" href="{% url 'productos:listar' %}">Inventario</a>
+        </div>
+    </nav>
+
+    <main class="contenedor contenido-principal">
+        {% if messages %}
+            <div class="mensajes">
+                {% for message in messages %}
+                    <p class="mensaje {% if message.tags == 'error' %}mensaje-error{% else %}mensaje-exito{% endif %}">
+                        {{ message }}
+                    </p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <section class="formulario-seccion">
+            <header class="encabezado-pagina">
+                <h1>
+                    {% if producto %}
+                        Editar producto
+                    {% else %}
+                        Registrar producto
+                    {% endif %}
+                </h1>
+                <p>Completa los datos del producto.</p>
+            </header>
+
+            <div class="tarjeta">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="campo">
+                        <label for="nombre">Nombre del producto</label>
+                        <input
+                            id="nombre"
+                            type="text"
+                            name="nombre"
+                            maxlength="100"
+                            value="{{ producto.nombre|default:'' }}"
+                            required
+                        >
+                    </div>
+                    <div class="campo">
+                        <label for="precio">Precio</label>
+                        <div class="campo-precio">
+                            <span aria-hidden="true">$</span>
+                            <input
+                                id="precio"
+                                type="number"
+                                name="precio"
+                                min="0"
+                                step="0.01"
+                                value="{{ producto.precio|default:'' }}"
+                                required
+                            >
+                        </div>
+                    </div>
+                    <div class="campo">
+                        <label for="cantidad">Cantidad disponible</label>
+                        <input
+                            id="cantidad"
+                            type="number"
+                            name="cantidad"
+                            min="0"
+                            step="1"
+                            value="{{ producto.cantidad|default:'' }}"
+                            required
+                        >
+                    </div>
+                    <div class="campo">
+                        <label for="categoria">Categoria</label>
+                        <input
+                            id="categoria"
+                            type="text"
+                            name="categoria"
+                            maxlength="100"
+                            value="{{ producto.categoria|default:'' }}"
+                            required
+                        >
+                    </div>
+                    <div class="acciones-formulario">
+                        <button class="boton boton-principal" type="submit">
+                            Guardar producto
+                        </button>
+                        <a class="boton boton-secundario" href="{% url 'productos:listar' %}">
+                            Volver al inventario
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
